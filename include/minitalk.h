@@ -10,4 +10,12 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#ifndef MINITALK_H
+# define MINITALK_H
 
+# include <stdlib.h> // malloc, free
+# include <unistd.h> // write
+# include "libft.h"
+
+
+#endif

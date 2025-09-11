@@ -17,7 +17,7 @@ RM = rm -f
 MAKE = make
 
 # executable name
-NAME = push_swap
+NAME = miniTalk
 LIBFT = libft/libft.a
 
 # directories

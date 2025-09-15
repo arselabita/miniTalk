@@ -10,9 +10,15 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minitalk.h"
+//#include "minitalk.h"
+#include <stdio.h>
+#include <unistd.h>
 
 int main()
 {
+	long id;
+
+	id = getpid(); // geting the process id
+	printf("id: %ld\n", id);
 	return (0);
 }

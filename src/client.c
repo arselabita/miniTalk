@@ -11,42 +11,86 @@
 /* ************************************************************************** */
 
 #include "minitalk.h"
-#include <stdio.h>
-#include <unistd.h>
+// #include <stdio.h>
+// #include <unistd.h>
+// #include <signal.h>
+// #include <stdlib.h>
 
-static int parsing_arguments(int pid, char *av)
+static int	ft_valid_number(char *str)
 {
-	int i;
-    int j;
-    int ascii_value;
+	int	i;
 
+	if (!str)
+		return (0);
 	i = 0;
-	while (av[i])
+	if (str[i] == '-' || str[i] == '+')
+		i++;
+	if (!str[i])
+		return (0);
+	while (str[i])
 	{
-        j = 7;
-        ascii_value = av[i];
-        while (j >= 0)
-        {
-		    if (((ascii_value >> j) & 1) == 0)
-              kill(pid, SIGUSR1);
-            else
-                kill(pid, SIGUSR2);
-            usleep(100);
-            j--;
-        }
+		if (str[i] < '0' || str[i] > '9')
+			return (0);
 		i++;
 	}
-	return (0);
+	return (1);
 }
 
 int main(int ac, char **av)
 {
     pid_t pid;
+    int i;
+    int j;
+    int ascii_value;
+    int bit;
 
 	if (ac != 3)
-		return (write(2, "ERROR\n", 6), 1);
+		return (write(2, "ERROR\n", 6), -1);
+    if (av[1] == NULL)
+        return (write(2, "ERROR\n", 6), -1);
+    if (!ft_valid_number(av[1]))
+		return (write(2, "ERROR\n", 6), -1);
     pid = ft_atoi(av[1]);
-	if (!parsing_arguments(pid, av[2]))
-		return (write(2, "ERROR\n", 6), 1);
+	i = 0;
+	while (av[2][i])
+	{
+        j = 7;
+        ascii_value = av[2][i];
+        while (j >= 0)
+        {
+            bit = (ascii_value >> j) & 1;
+		    if (bit == 0)
+            {
+                if (kill(pid, SIGUSR1) == -1)
+                    exit(EXIT_FAILURE);
+            }
+            else
+            {
+                if (kill(pid, SIGUSR2) == -1)
+                    exit(EXIT_FAILURE);
+            }
+            usleep(500);
+            j--;
+        }
+		i++;
+	}    
+    ascii_value = '\0';
+    j = 7;
+    while (j >= 0)
+    {   
+        bit = (ascii_value >> j) & 1;
+	    if (bit == 0)
+        {
+            if (kill(pid, SIGUSR1) == -1)    
+                exit(EXIT_FAILURE);
+        }
+        else
+        {
+            if (kill(pid, SIGUSR2) == -1) 
+               exit(EXIT_FAILURE);
+        }
+        usleep(500);
+        j--;
+    }
 	return (0);
 }

@@ -11,3 +11,29 @@
 /* ************************************************************************** */
 
 #include "minitalk.h"
+#include <stdio.h>
+#include <unistd.h>
+/*
+    Message Passing is a method where processes communicate by sending 
+    and receiving messages to exchange data.
+        1. In this method, one process sends a message and the other process 
+            receives it, allowing them to share information.
+        2. Message Passing can be achieved through different methods like 
+            Sockets, Message Queues or Pipes.
+*/
+
+void handler(int signal)
+{
+
+}
+int main (int ac, char **av)
+{
+    struct sigaction sa;
+    pid_t my_pid;
+
+	my_pid = getpid(); // geting the process id
+    sa.handler = handler;
+    sigaction(SIGUSR1, &sa, NULL);
+    client (my_pid, );
+
+}

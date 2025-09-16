@@ -25,8 +25,7 @@ SRC_DIR = src
 OBJ_DIR = build
 
 # source to object files
-SRCS = $(SRC_DIR)/main.c \
-	   $(SRC_DIR)/server.c \
+SRCS = $(SRC_DIR)/server.c \
 	   $(SRC_DIR)/client.c \
 OBJS = $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 

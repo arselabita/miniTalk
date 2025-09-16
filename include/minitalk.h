@@ -14,8 +14,22 @@
 # define MINITALK_H
 
 # include <stdlib.h> // malloc, free
-# include <unistd.h> // write
+# include <unistd.h> // write and standard unix functions, like getpid()
+#include <sys/types.h> // various type definitions, like pid_t
+# include <signal.h> // signal name macros, and the kill() prototype
 # include "libft.h"
+
+struct sigaction {
+               void     (*handler)(int);
+               void     (*sigaction)(int, siginfo_t *, void *);
+               sigset_t   sa_mask;
+               int        sa_flags;
+               void     (*sa_restorer)(void);
+};
+
+// client:
+int client(int pid, char **str);
+
 
 
 #endif

@@ -28,12 +28,11 @@ void handler(int signal)
 }
 int main (int ac, char **av)
 {
-    struct sigaction sa;
     pid_t my_pid;
 
 	my_pid = getpid(); // geting the process id
-    sa.handler = handler;
-    sigaction(SIGUSR1, &sa, NULL);
-    client (my_pid, );
+    ft_printf("%d", (int)my_pid);
+    
+    //sigaction(SIGUSR1, &sa, NULL);
 
 }

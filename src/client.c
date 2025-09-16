@@ -14,21 +14,6 @@
 #include <stdio.h>
 #include <unistd.h>
 
-static int	convert_to_binary(int ascii_value)
-{
-	int	i;
-    int bits[8];
-
-	i = 0;
-	while (i < 8)
-	{    
-        bits[i] = ascii_value % 2;
-		ascii_value /= 2;
-		i++;
-	}
-
-	return (0);
-}
 static int parsing_arguments(char *av)
 {
 	int i;
@@ -41,11 +26,11 @@ static int parsing_arguments(char *av)
     //      2. then i get the binary of it
 	while (av[i])
 	{
-        j = 0;
+        j = 7;
         ascii_value = av[i];
-        while (j < 8)
+        while (j > 0)
         {
-		    if (convert_to_binary(ascii_value) == 0)
+		    if (((ascii_value >> j) & 1) == 0)
               kill(pid, SIGUSR1);
             else
                 kill(pid, SIGUSR2);

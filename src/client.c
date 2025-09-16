@@ -14,28 +14,25 @@
 #include <stdio.h>
 #include <unistd.h>
 
-static int parsing_arguments(char *av)
+static int parsing_arguments(int pid, char *av)
 {
 	int i;
     int j;
     int ascii_value;
 
 	i = 0;
-    // so basically i will loop through all my str:
-    //      1. i convert each character into ascii value
-    //      2. then i get the binary of it
 	while (av[i])
 	{
         j = 7;
         ascii_value = av[i];
-        while (j > 0)
+        while (j >= 0)
         {
 		    if (((ascii_value >> j) & 1) == 0)
               kill(pid, SIGUSR1);
             else
                 kill(pid, SIGUSR2);
             usleep(100);
-            j++;
+            j--;
         }
 		i++;
 	}
@@ -44,9 +41,12 @@ static int parsing_arguments(char *av)
 
 int main(int ac, char **av)
 {
+    pid_t pid;
+
 	if (ac != 3)
 		return (write(2, "ERROR\n", 6), 1);
-	if (!parsing_arguments(av[2]))
+    pid = ft_atoi(av[1]);
+	if (!parsing_arguments(pid, av[2]))
 		return (write(2, "ERROR\n", 6), 1);
 	return (0);
 }

@@ -11,8 +11,11 @@
 /* ************************************************************************** */
 
 #include "minitalk.h"
-#include <stdio.h>
-#include <unistd.h>
+// #include <stdio.h>
+// #include <unistd.h>
+// #include <signal.h>
+// #include <stdlib.h>
+
 /*
     Message Passing is a method where processes communicate by sending 
     and receiving messages to exchange data.
@@ -24,19 +27,27 @@
 
 void handler(int signal)
 {
-    if (signal == 0)
+    if (signal == SIGUSR1)
         write(1, "0", 1);
-    else
+    else if (signal == SIGUSR2)
         write(1, "1", 1);
+    else
+        exit(EXIT_FAILURE);
 }
 int main (int ac, char **av)
 {
     pid_t my_pid;
 
 	my_pid = getpid(); // geting the process id
-    ft_printf("%d", (int)my_pid);
+    printf("%d", (int)my_pid);
 
     signal(SIGUSR1, handler);
     signal(SIGUSR2, handler);
+
+    while (1)
+    {
+        pause();
+    }
+    
 
 }

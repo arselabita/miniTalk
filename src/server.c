@@ -24,7 +24,10 @@
 
 void handler(int signal)
 {
-
+    if (signal == 0)
+        write(1, "0", 1);
+    else
+        write(1, "1", 1);
 }
 int main (int ac, char **av)
 {
@@ -32,7 +35,8 @@ int main (int ac, char **av)
 
 	my_pid = getpid(); // geting the process id
     ft_printf("%d", (int)my_pid);
-    
-    //sigaction(SIGUSR1, &sa, NULL);
+
+    signal(SIGUSR1, handler);
+    signal(SIGUSR2, handler);
 
 }

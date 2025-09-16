@@ -14,30 +14,54 @@
 #include <stdio.h>
 #include <unistd.h>
 
-static int parsing_arguments(char **av)
+static int	convert_to_binary(int ascii_value)
 {
-	int i;
-	int j;
+	int	i;
+    int bits[8];
 
 	i = 0;
-	while (av[1][i])
+	while (i < 8)
+	{    
+        bits[i] = ascii_value % 2;
+		ascii_value /= 2;
+		i++;
+	}
+
+	return (0);
+}
+static int parsing_arguments(char *av)
+{
+	int i;
+    int j;
+    int ascii_value;
+
+	i = 0;
+    // so basically i will loop through all my str:
+    //      1. i convert each character into ascii value
+    //      2. then i get the binary of it
+	while (av[i])
 	{
-		write(1, av[1][i], 1);
+        j = 0;
+        ascii_value = av[i];
+        while (j < 8)
+        {
+		    if (convert_to_binary(ascii_value) == 0)
+              kill(pid, SIGUSR1);
+            else
+                kill(pid, SIGUSR2);
+            usleep(100);
+            j++;
+        }
 		i++;
 	}
 	return (0);
 }
-int client(int pid, char **str)
-{
-    return (0);
-}
+
 int main(int ac, char **av)
 {
-	
-	if (ac != 2)
+	if (ac != 3)
 		return (write(2, "ERROR\n", 6), 1);
-	if (!parsing_arguments(av))
+	if (!parsing_arguments(av[2]))
 		return (write(2, "ERROR\n", 6), 1);
-    client(my_pid, av);
 	return (0);
 }

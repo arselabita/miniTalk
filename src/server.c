@@ -10,11 +10,12 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minitalk.h"
-// #include <stdio.h>
-// #include <unistd.h>
-// #include <signal.h>
-// #include <stdlib.h>
+//#include "minitalk.h"
+#include <stdio.h>
+#include <unistd.h>
+#include <signal.h>
+#include <stdlib.h>
+#include <sys/types.h>
 
 /*
     Message Passing is a method where processes communicate by sending 
@@ -25,29 +26,26 @@
             Sockets, Message Queues or Pipes.
 */
 
-void handler(int signal)
+void handler1(int sig)
 {
-    if (signal == SIGUSR1)
-        write(1, "0", 1);
-    else if (signal == SIGUSR2)
-        write(1, "1", 1);
-    else
-        exit(EXIT_FAILURE);
+    (void)sig;
+    write(1, "0", 1);
 }
-int main (int ac, char **av)
+void handler2(int sig)
 {
-    pid_t my_pid;
+    (void)sig;
+    write(1, "1", 1);
+}
 
-	my_pid = getpid(); // geting the process id
-    printf("%d", (int)my_pid);
+int main()
+{
+    pid_t pid;
 
-    signal(SIGUSR1, handler);
-    signal(SIGUSR2, handler);
-
+    pid = getpid();
+    printf("%d\n", (int)pid);
+    signal(SIGUSR1, handler1);
+    signal(SIGUSR2, handler2);
     while (1)
-    {
         pause();
-    }
-    
-
+    return (0);
 }

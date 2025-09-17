@@ -10,11 +10,12 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minitalk.h"
-// #include <stdio.h>
-// #include <unistd.h>
-// #include <signal.h>
-// #include <stdlib.h>
+// #include "minitalk.h"
+#include <stdio.h>
+#include <unistd.h>
+#include <signal.h>
+#include <stdlib.h>
+#include <sys/types.h>
 
 static int	ft_valid_number(char *str)
 {
@@ -42,7 +43,6 @@ int main(int ac, char **av)
     int i;
     int j;
     int ascii_value;
-    int bit;
 
 	if (ac != 3)
 		return (write(2, "ERROR\n", 6), -1);
@@ -50,7 +50,7 @@ int main(int ac, char **av)
         return (write(2, "ERROR\n", 6), -1);
     if (!ft_valid_number(av[1]))
 		return (write(2, "ERROR\n", 6), -1);
-    pid = ft_atoi(av[1]);
+    pid = atoi(av[1]);
 	i = 0;
 	while (av[2][i])
 	{
@@ -58,18 +58,17 @@ int main(int ac, char **av)
         ascii_value = av[2][i];
         while (j >= 0)
         {
-            bit = (ascii_value >> j) & 1;
-		    if (bit == 0)
-            {
-                if (kill(pid, SIGUSR1) == -1)
-                    exit(EXIT_FAILURE);
-            }
-            else
+		    if ((ascii_value >> j) & 1)
             {
                 if (kill(pid, SIGUSR2) == -1)
                     exit(EXIT_FAILURE);
             }
-            usleep(500);
+            else
+            {
+                if (kill(pid, SIGUSR1) == -1)
+                    exit(EXIT_FAILURE);
+            }
+            usleep(300);
             j--;
         }
 		i++;
@@ -78,18 +77,17 @@ int main(int ac, char **av)
     j = 7;
     while (j >= 0)
     {   
-        bit = (ascii_value >> j) & 1;
-	    if (bit == 0)
+	    if ((ascii_value >> j) & 1)
         {
-            if (kill(pid, SIGUSR1) == -1)    
+            if (kill(pid, SIGUSR2) == -1)    
                 exit(EXIT_FAILURE);
         }
         else
         {
-            if (kill(pid, SIGUSR2) == -1) 
+            if (kill(pid, SIGUSR1) == -1) 
                exit(EXIT_FAILURE);
         }
-        usleep(500);
+        usleep(300);
         j--;
     }
 	return (0);

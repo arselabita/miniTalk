@@ -25,41 +25,26 @@
         2. Message Passing can be achieved through different methods like 
             Sockets, Message Queues or Pipes.
 */
-typedef struct s_bits
-{
-    unsigned char bits;
-    int bit_position;
-} t_bits;
 
-static t_bits bits = {0, 0};
 
-void handler1(int sig)
+void handler(int sig)
 {
-    bits.bits = (bits.bits << 1) | 0;
-    bits.bit_position++;
-    if (bits.bit_position == 8)
+    static unsigned char bits = 0;
+    static int bit_position = 0;
+
+    if (sig == SIGUSR1)
+        bits = (bits << 1) | 0;
+    else
+        bits = (bits << 1) | 1;
+    bit_position++;
+    if (bit_position == 8)
     {
-        if (bits.bits != '\0')
-            write(1, &bits.bits, 1);
+        if (bits != '\0')
+            write(1, &bits, 1);
         else
             write(1, "\n", 1);
-        bits.bits = 0;
-        bits.bit_position = 0;        
-    }
-}
-
-void handler2(int sig)
-{
-    bits.bits = (bits.bits << 1) | 1;
-    bits.bit_position++;
-    if (bits.bit_position == 8)
-    {
-        if (bits.bits != '\0')
-            write(1, &bits.bits, 1);
-        else
-            write(1, "\n", 1);
-        bits.bits = 0;
-        bits.bit_position = 0;        
+        bits = 0;
+        bit_position = 0;        
     }
 }
 
@@ -69,8 +54,8 @@ int main()
 
     pid = getpid();
     printf("%d\n", (int)pid);
-    signal(SIGUSR1, handler1);
-    signal(SIGUSR2, handler2);
+    signal(SIGUSR1, handler);
+    signal(SIGUSR2, handler);
     while (1)
         pause();
     return (0);

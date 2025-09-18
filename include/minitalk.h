@@ -19,16 +19,12 @@
 # include <signal.h> // signal name macros, and the kill() prototype
 # include "libft.h"
 
-struct sigaction {
-               void     (*handler)(int);
-               void     (*sigaction)(int, siginfo_t *, void *);
-               sigset_t   sa_mask;
-               int        sa_flags;
-               void     (*sa_restorer)(void);
-};
+typedef struct s_bits
+{
+    unsigned char bits;
+    int bit_position;
+} t_bits;
 
-// client:
-int client(int pid, char **str);
 
 
 

@@ -13,7 +13,7 @@
 #include <unistd.h>
 #include <signal.h>
 #include <sys/types.h>
-#include "libft/libft.h"
+#include "libft.h"
 
 static int	ft_valid_number(char *str)
 {

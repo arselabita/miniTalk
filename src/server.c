@@ -13,7 +13,7 @@
 #include <unistd.h>
 #include <signal.h>
 #include <sys/types.h>
-#include "printf/ft_printf.h"
+#include "ft_printf.h"
 
 static void handler(int sig)
 {

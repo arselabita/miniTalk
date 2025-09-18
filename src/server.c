@@ -28,15 +28,23 @@
 
 void handler1(int sig)
 {
+    unsigned int add_bits;
+    unsigned int bit_position;
+
+    add_bits = 0;
+    if (sig == SIGUSR1)
+        add_bits |= 1;
+    bit_position++;
+    if (bit_position == 8)
+
     (void)sig;
     write(1, "0", 1);
 }
 void handler2(int sig)
 {
     (void)sig;
-    write(1, "1", 1);
+    write(1, "0", 1);
 }
-
 int main()
 {
     pid_t pid;
@@ -45,7 +53,25 @@ int main()
     printf("%d\n", (int)pid);
     signal(SIGUSR1, handler1);
     signal(SIGUSR2, handler2);
+
     while (1)
         pause();
     return (0);
 }
+
+
+
+// void handler2(int sig)
+// {
+//     int count;
+//     int i;
+//     char save_the_bit;
+
+//     count = 0;
+//     if (sig == SIGUSR1)
+//         save_the_bit += 1;
+//     count++;
+//     if (count == 8)
+
+
+// }

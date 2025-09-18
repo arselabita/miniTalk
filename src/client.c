@@ -41,8 +41,8 @@ int main(int ac, char **av)
 {
     pid_t pid;
     int i;
-    int j;
-    int ascii_value;
+    unsigned int j;
+    unsigned int ascii_value;
 
 	if (ac != 3)
 		return (write(2, "ERROR\n", 6), -1);
@@ -84,8 +84,8 @@ int main(int ac, char **av)
         }
         else
         {
-            if (kill(pid, SIGUSR1) == -1) 
-               exit(EXIT_FAILURE);
+            if (kill(pid, SIGUSR1) == -1)
+                exit(EXIT_FAILURE);
         }
         usleep(300);
         j--;

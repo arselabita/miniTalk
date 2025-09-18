@@ -1,31 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minitalk.h                                         :+:      :+:    :+:   */
+/*   ft_calloc.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abita <abita@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/11 12:14:41 by abita             #+#    #+#             */
-/*   Updated: 2025/09/11 12:14:43 by abita            ###   ########.fr       */
+/*   Created: 2025/04/29 10:52:56 by abita             #+#    #+#             */
+/*   Updated: 2025/04/29 10:53:03 by abita            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINITALK_H
-# define MINITALK_H
+#include "ft_printf.h"
 
-# include <stdlib.h> // malloc, free
-# include <unistd.h> // write and standard unix functions, like getpid()
-#include <sys/types.h> // various type definitions, like pid_t
-# include <signal.h> // signal name macros, and the kill() prototype
-# include "libft.h"
-
-typedef struct s_bits
+void	*ft_calloc(size_t count, size_t size)
 {
-    unsigned char bits;
-    int bit_position;
-} t_bits;
+	void	*ptr;
 
-
-
-
-#endif
+	if (count && size && count > SIZE_MAX / size)
+		return (NULL);
+	ptr = malloc(count * size);
+	if (!ptr)
+		return (NULL);
+	ft_bzero(ptr, count * size);
+	return (ptr);
+}

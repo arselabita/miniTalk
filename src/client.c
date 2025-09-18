@@ -10,12 +10,10 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-// #include "minitalk.h"
-#include <stdio.h>
 #include <unistd.h>
 #include <signal.h>
-#include <stdlib.h>
 #include <sys/types.h>
+#include "libft/libft.h"
 
 static int	ft_valid_number(char *str)
 {
@@ -36,45 +34,11 @@ static int	ft_valid_number(char *str)
 	}
 	return (1);
 }
-
-int main(int ac, char **av)
+static void encoding(int ascii_value, int pid)
 {
-    pid_t pid;
-    int i;
     int j;
-    int ascii_value;
-
-	if (ac != 3)
-		return (write(2, "ERROR\n", 6), -1);
-    if (av[1] == NULL)
-        return (write(2, "ERROR\n", 6), -1);
-    if (!ft_valid_number(av[1]))
-		return (write(2, "ERROR\n", 6), -1);
-    pid = atoi(av[1]);
-	i = 0;
-	while (av[2][i])
-	{
-        j = 7;
-        ascii_value = av[2][i];
-        while (j >= 0)
-        {
-		    if ((ascii_value >> j) & 1)
-            {
-                if (kill(pid, SIGUSR2) == -1)
-                    exit(EXIT_FAILURE);
-            }
-            else
-            {
-                if (kill(pid, SIGUSR1) == -1)
-                    exit(EXIT_FAILURE);
-            }
-            usleep(100);
-            j--;
-        }
-		i++;
-	}    
-    ascii_value = '\0';
     j = 7;
+
     while (j >= 0)
     {   
 	    if ((ascii_value >> j) & 1)
@@ -87,8 +51,33 @@ int main(int ac, char **av)
             if (kill(pid, SIGUSR1) == -1)
                 exit(EXIT_FAILURE);
         }
-        usleep(100);
+        usleep(500);
         j--;
     }
+}
+int main(int ac, char **av)
+{
+    pid_t pid;
+    int i;
+    int ascii_value;
+
+	if (ac != 3)
+		return (write(2, "ERROR: Write: PID and String!\n", 30), -1);
+    if (av[1] == NULL)
+        return (write(2, "ERROR: Pass the PID!\n", 24), -1);
+    if (!ft_valid_number(av[1]))
+		return (write(2, "ERROR: Please input only numbers\n", 33), -1);
+    pid = ft_atoi(av[1]);
+	i = 0;
+    if (av[2] == NULL)
+        return (write(2, "ERROR: Pass the String!\n", 24), -1);
+	while (av[2][i])
+	{
+        ascii_value = av[2][i];
+        encoding(ascii_value, pid);
+		i++;
+	}    
+    ascii_value = '\0';
+    encoding(ascii_value, pid);
 	return (0);
 }

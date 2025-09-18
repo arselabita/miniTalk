@@ -25,26 +25,44 @@
         2. Message Passing can be achieved through different methods like 
             Sockets, Message Queues or Pipes.
 */
+typedef struct s_bits
+{
+    unsigned char bits;
+    int bit_position;
+} t_bits;
+
+static t_bits bits = {0, 0};
 
 void handler1(int sig)
 {
-    unsigned int add_bits;
-    unsigned int bit_position;
-
-    add_bits = 0;
-    if (sig == SIGUSR1)
-        add_bits |= 1;
-    bit_position++;
-    if (bit_position == 8)
-
-    (void)sig;
-    write(1, "0", 1);
+    bits.bits = (bits.bits << 1) | 0;
+    bits.bit_position++;
+    if (bits.bit_position == 8)
+    {
+        if (bits.bits != '\0')
+            write(1, &bits.bits, 1);
+        else
+            write(1, "\n", 1);
+        bits.bits = 0;
+        bits.bit_position = 0;        
+    }
 }
+
 void handler2(int sig)
 {
-    (void)sig;
-    write(1, "0", 1);
+    bits.bits = (bits.bits << 1) | 1;
+    bits.bit_position++;
+    if (bits.bit_position == 8)
+    {
+        if (bits.bits != '\0')
+            write(1, &bits.bits, 1);
+        else
+            write(1, "\n", 1);
+        bits.bits = 0;
+        bits.bit_position = 0;        
+    }
 }
+
 int main()
 {
     pid_t pid;
@@ -53,25 +71,7 @@ int main()
     printf("%d\n", (int)pid);
     signal(SIGUSR1, handler1);
     signal(SIGUSR2, handler2);
-
     while (1)
         pause();
     return (0);
 }
-
-
-
-// void handler2(int sig)
-// {
-//     int count;
-//     int i;
-//     char save_the_bit;
-
-//     count = 0;
-//     if (sig == SIGUSR1)
-//         save_the_bit += 1;
-//     count++;
-//     if (count == 8)
-
-
-// }

@@ -10,16 +10,24 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <sys/types.h>
 #include <unistd.h>
 #include <signal.h>
-#include <sys/types.h>
 #include "ft_printf.h"
 
-static void handler(int sig)
-{
-    static unsigned char bits = 0;
-    static int bit_position = 0;
+#define _POSIX_C_SOURCE >= 199309L
+#define _DEFAULT_SOURCE
+#define  _XOPEN_SOURCE 700
 
+void handler(int sig, siginfo_t *info, void *ucontext)
+{
+	(void)ucontext;
+	static unsigned char bits = 0;
+    static int bit_position = 0;
+	static int client_pid;
+	
+	if (!client_pid)
+		client_pid = info.si_pid;
     if (sig == SIGUSR1)
         bits = (bits << 1) | 0;
     else
@@ -38,9 +46,16 @@ static void handler(int sig)
 
 int main()
 {
-    ft_printf("%d\n", (int)getpid());
-    signal(SIGUSR1, handler);
-    signal(SIGUSR2, handler);
+	struct sigaction sa;
+
+	sa.sa_handler = &handler;
+	sa.sa_flags = 0;
+	sigemptyset(&sa.sa_mask);
+	if (sigaction(SIGUSR1, &sa, NULL) == -1)
+		return (write(2, "error: sigaction\n", 17), -1);
+	if (sigaction(SIGUSR2, &sa, NULL) == -1)
+		return (write(2, "error: sigaction\n", 17), -1);
+	ft_printf("%d\n", (int)getpid());
     while (1)
         pause();
     return (0);

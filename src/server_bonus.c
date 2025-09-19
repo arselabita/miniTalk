@@ -23,10 +23,10 @@ void handler(int sig, siginfo_t *info, void *ucontext)
 	(void)ucontext;
 	static unsigned char bits = 0;
     static int bit_position = 0;
-	static int client_pid;
+	static int client_pid = 0;
 	
 	if (!client_pid)
-		client_pid = info.si_pid;
+		client_pid = info->si_pid;
     if (sig == SIGUSR1)
         bits = (bits << 1) | 0;
     else
@@ -39,15 +39,17 @@ void handler(int sig, siginfo_t *info, void *ucontext)
         else
             write(1, "\n", 1);
         bits = 0;
-        bit_position = 0;     
+        bit_position = 0;
+        client_pid = 0;
     }
+    kill(client_pid, SIGUSR1);
 }
 
 int main()
 {
 	struct sigaction sa;
 
-	sa.sa_handler = &handler;
+	sa.sa_sigaction = &handler;
 	sa.sa_flags = 0;
 	sigemptyset(&sa.sa_mask);
 	if (sigaction(SIGUSR1, &sa, NULL) == -1)

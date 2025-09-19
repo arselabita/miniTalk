@@ -32,16 +32,13 @@ static void handler(int sig)
         else
             write(1, "\n", 1);
         bits = 0;
-        bit_position = 0;        
+        bit_position = 0;     
     }
 }
 
 int main()
 {
-    pid_t pid;
-
-    pid = getpid();
-    ft_printf("%d\n", (int)pid);
+    ft_printf("%d\n", (int)getpid());
     signal(SIGUSR1, handler);
     signal(SIGUSR2, handler);
     while (1)

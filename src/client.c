@@ -37,8 +37,8 @@ static int	ft_valid_number(char *str)
 static void encoding(int ascii_value, int pid)
 {
     int j;
-    j = 7;
 
+    j = 7;
     while (j >= 0)
     {   
 	    if ((ascii_value >> j) & 1)
@@ -51,15 +51,15 @@ static void encoding(int ascii_value, int pid)
             if (kill(pid, SIGUSR1) == -1)
                 exit(EXIT_FAILURE);
         }
-        usleep(500);
+        usleep(100);
         j--;
     }
 }
+
 int main(int ac, char **av)
 {
     pid_t pid;
     int i;
-    int ascii_value;
 
 	if (ac != 3)
 		return (write(2, "ERROR: Write: PID and String!\n", 30), -1);
@@ -73,11 +73,9 @@ int main(int ac, char **av)
         return (write(2, "ERROR: Pass the String!\n", 24), -1);
 	while (av[2][i])
 	{
-        ascii_value = av[2][i];
-        encoding(ascii_value, pid);
+        encoding(av[2][i], pid);
 		i++;
-	}    
-    ascii_value = '\0';
-    encoding(ascii_value, pid);
-	return (0);
+	}
+    encoding('\0', pid);
+    return (0);
 }

@@ -10,9 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <sys/types.h>
 #include <unistd.h>
 #include <signal.h>
-#include <sys/types.h>
 #include "libft.h"
 
 static int	ft_valid_number(char *str)
@@ -59,6 +59,7 @@ static void encoding(int ascii_value, int pid)
 int main(int ac, char **av)
 {
     pid_t pid;
+    pid_t client_pid;
     int i;
 
 	if (ac != 3)
@@ -77,5 +78,6 @@ int main(int ac, char **av)
 		i++;
 	}
     encoding('\0', pid);
+    client_pid = getpid();
     return (0);
 }

@@ -51,7 +51,6 @@ static void encoding(int ascii_value, int pid)
             if (kill(pid, SIGUSR1) == -1)
                 exit(EXIT_FAILURE);
         }
-        usleep(100);
         j--;
     }
 }
@@ -72,6 +71,7 @@ int main(int ac, char **av)
 	i = 0;
     if (av[2] == NULL)
         return (write(2, "ERROR: Pass the String!\n", 24), -1);
+    signal(SIGUSR1, msg_received);
 	while (av[2][i])
 	{
         encoding(av[2][i], pid);

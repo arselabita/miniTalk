@@ -54,7 +54,10 @@ static void encoding(int ascii_value, int pid)
         j--;
     }
 }
-
+void msg_received()
+{
+    
+}
 int main(int ac, char **av)
 {
     pid_t pid;

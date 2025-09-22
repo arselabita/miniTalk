@@ -51,7 +51,7 @@ static void encoding(int ascii_value, int pid)
             if (kill(pid, SIGUSR1) == -1)
                 exit(EXIT_FAILURE);
         }
-        usleep(100);
+        usleep(20);
         j--;
     }
 }
@@ -68,6 +68,8 @@ int main(int ac, char **av)
     if (!ft_valid_number(av[1]))
 		return (write(2, "ERROR: Please input only numbers\n", 33), -1);
     pid = ft_atoi(av[1]);
+    if (pid < -1)
+        return (write(1, "ERROR: U trying to kill it heheh 😑", 37), -1);
 	i = 0;
     if (av[2] == NULL)
         return (write(2, "ERROR: Pass the String!\n", 24), -1);

@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #define _DEFAULT_SOURCE
-
 #include <sys/types.h>
 #include <unistd.h>
 #include <signal.h>

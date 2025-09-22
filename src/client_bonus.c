@@ -61,7 +61,6 @@ void msg_received()
 int main(int ac, char **av)
 {
     pid_t pid;
-    pid_t client_pid;
     int i;
 
 	if (ac != 3)
@@ -74,13 +73,11 @@ int main(int ac, char **av)
 	i = 0;
     if (av[2] == NULL)
         return (write(2, "ERROR: Pass the String!\n", 24), -1);
-    signal(SIGUSR1, msg_received);
+    signal(SIGUSR1, msg_received);;
 	while (av[2][i])
 	{
         encoding(av[2][i], pid);
 		i++;
 	}
-    encoding('\0', pid);
-    client_pid = getpid();
     return (0);
 }

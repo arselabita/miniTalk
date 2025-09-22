@@ -11,12 +11,11 @@
 /* ************************************************************************** */
 
 #define _DEFAULT_SOURCE
+#define BUFFER_SIZE 1024
+#include <sys/types.h>
 #include <unistd.h>
 #include <signal.h>
-#include <sys/types.h>
 #include "ft_printf.h"
-
-#define BUFFER_SIZE 1024
 
 static void printing(unsigned char bits)
 {
@@ -43,11 +42,13 @@ static void printing(unsigned char bits)
 
 static void handler(int sig, siginfo_t *info, void *ucontext)
 {
-    (void)info;
     (void)ucontext;
     static unsigned char bits = 0;
     static int bit_position = 0;
+    static pid_t client_pid = 0;
 
+	if (!client_pid)
+		client_pid = info->si_pid;
     if (sig == SIGUSR1)
         bits = (bits << 1) | 0;
     else
@@ -57,15 +58,17 @@ static void handler(int sig, siginfo_t *info, void *ucontext)
     {
         printing(bits);
         bits = 0;
-        bit_position = 0;     
+        bit_position = 0;
     }
+    if (kill(info->si_pid, SIGUSR1) == -1)
+        write(2, "Error: failed to send the client pid!\n", 39); 
 }
 
 int main()
 {
     struct sigaction sa;
 
-    ft_printf("%d\n", (int)getpid());
+    ft_printf("PID: %d\n", (int)getpid());
 	sa.sa_sigaction = &handler;
 	sa.sa_flags = SA_SIGINFO;
 	sigemptyset(&sa.sa_mask);
@@ -74,6 +77,6 @@ int main()
 	if (sigaction(SIGUSR2, &sa, NULL) == -1)
 		return (write(2, "error: sigaction\n", 17), -1);
     while (1)
-        pause();
+        sleep(5);
     return (0);
 }

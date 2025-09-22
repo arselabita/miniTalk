@@ -16,8 +16,7 @@
 #include <unistd.h>
 #include <signal.h>
 #include <stdio.h>
-//#include "ft_printf.h"
-#include <stdio.h>
+#include "ft_printf.h"
 
 static void printing(unsigned char bits)
 {
@@ -47,10 +46,12 @@ static void handler(int sig, siginfo_t *info, void *ucontext)
     (void)ucontext;
     static unsigned char bits = 0;
     static int bit_position = 0;
-    static int client_pid = 0;
+    static pid_t client_pid = 0;
 	
 	if (!client_pid)
 		client_pid = info->si_pid;
+    if (info->si_pid != client_pid)
+        return ;
     if (sig == SIGUSR1)
         bits = (bits << 1) | 0;
     else

@@ -11,19 +11,43 @@
 /* ************************************************************************** */
 
 #define _DEFAULT_SOURCE
+#define BUFFER_SIZE 1024
 #include <sys/types.h>
 #include <unistd.h>
 #include <signal.h>
 #include <stdio.h>
 //#include "ft_printf.h"
+#include <stdio.h>
 
-
-void handler(int sig, siginfo_t *info, void *ucontext)
+static void printing(unsigned char bits)
 {
-	(void)ucontext;
-	static unsigned char bits = 0;
+    static char buffer[BUFFER_SIZE];
+    static int i = 0;
+
+    if (bits != '\0')
+    {
+        buffer[i++] = bits;
+        if (i >= BUFFER_SIZE)
+        {
+            write(1, &buffer, i);
+            i = 0;                  
+        }
+    }
+    else
+    {
+        buffer[i++] = '\0';
+        write(1, &buffer, i);
+        write(1, "\n", 1);
+        i = 0;
+    }
+}
+
+static void handler(int sig, siginfo_t *info, void *ucontext)
+{
+    (void)ucontext;
+    static unsigned char bits = 0;
     static int bit_position = 0;
-	static int client_pid = 0;
+    static int client_pid = 0;
 	
 	if (!client_pid)
 		client_pid = info->si_pid;
@@ -34,30 +58,29 @@ void handler(int sig, siginfo_t *info, void *ucontext)
     bit_position++;
     if (bit_position == 8)
     {
-        if (bits != '\0')
-            write(1, &bits, 1);
-        else
-            write(1, "\n", 1);
+        printing(bits);
         bits = 0;
         bit_position = 0;
-        client_pid = 0;
     }
-    kill(client_pid, SIGUSR1);
+    if (info->si_pid == 0)
+        write(2, "Error: failed to get the client pid!\n", 37);
+    if (kill(client_pid, SIGUSR1) == -1)
+        write(2, "Error: failed to send the client pid!\n", 39); 
 }
 
 int main()
 {
-	struct sigaction sa;
+    struct sigaction sa;
 
     printf("%d\n", (int)getpid());
 	sa.sa_sigaction = &handler;
-	sa.sa_flags = 0;
+	sa.sa_flags = SA_SIGINFO;
 	sigemptyset(&sa.sa_mask);
 	if (sigaction(SIGUSR1, &sa, NULL) == -1)
 		return (write(2, "error: sigaction\n", 17), -1);
 	if (sigaction(SIGUSR2, &sa, NULL) == -1)
 		return (write(2, "error: sigaction\n", 17), -1);
     while (1)
-        pause();
+        sleep(5);
     return (0);
 }

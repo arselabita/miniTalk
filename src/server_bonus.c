@@ -14,7 +14,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <signal.h>
-#include "ft_printf.h"
+#include <stdio.h>
+//#include "ft_printf.h"
 
 
 void handler(int sig, siginfo_t *info, void *ucontext)
@@ -48,6 +49,7 @@ int main()
 {
 	struct sigaction sa;
 
+    printf("%d\n", (int)getpid());
 	sa.sa_sigaction = &handler;
 	sa.sa_flags = 0;
 	sigemptyset(&sa.sa_mask);
@@ -55,7 +57,6 @@ int main()
 		return (write(2, "error: sigaction\n", 17), -1);
 	if (sigaction(SIGUSR2, &sa, NULL) == -1)
 		return (write(2, "error: sigaction\n", 17), -1);
-	ft_printf("%d\n", (int)getpid());
     while (1)
         pause();
     return (0);

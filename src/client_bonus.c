@@ -10,10 +10,12 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#define _DEFAULT_SOURCE
 #include <sys/types.h>
 #include <unistd.h>
 #include <signal.h>
-#include "libft.h"
+#include <stdlib.h>
+//#include "libft.h"
 
 static int	ft_valid_number(char *str)
 {
@@ -54,12 +56,16 @@ static void encoding(int ascii_value, int pid)
         j--;
     }
 }
-void msg_received()
+void msg_received(int sig, siginfo_t *info, void *ucontext)
 {
-    
+    (void)sig;
+    (void)ucontext;
+    (void)info;
+    write(1, "aaa", 3);
 }
 int main(int ac, char **av)
 {
+    struct sigaction sa;
     pid_t pid;
     int i;
 
@@ -69,11 +75,17 @@ int main(int ac, char **av)
         return (write(2, "ERROR: Pass the PID!\n", 24), -1);
     if (!ft_valid_number(av[1]))
 		return (write(2, "ERROR: Please input only numbers\n", 33), -1);
-    pid = ft_atoi(av[1]);
-	i = 0;
+    pid = atoi(av[1]);
+    if (pid == -1)
+        return (write(1, "ERROR: U trying to kill it heheh 😑", 37), -1);
+    i = 0;
     if (av[2] == NULL)
         return (write(2, "ERROR: Pass the String!\n", 24), -1);
-    signal(SIGUSR1, msg_received);;
+    sa.sa_sigaction = &msg_received;
+	sa.sa_flags = 0;
+	sigemptyset(&sa.sa_mask);
+    if (sigaction(SIGUSR1, &sa, NULL) == -1)
+		return (write(2, "error: sigaction\n", 17), -1);
 	while (av[2][i])
 	{
         encoding(av[2][i], pid);

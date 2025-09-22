@@ -17,6 +17,8 @@
 #include <stdlib.h>
 //#include "libft.h"
 
+static int signal_received;
+
 static int	ft_valid_number(char *str)
 {
 	int	i;
@@ -43,25 +45,31 @@ static void encoding(int ascii_value, int pid)
     j = 7;
     while (j >= 0)
     {   
-	    if ((ascii_value >> j) & 1)
+        if (signal_received == 1)
         {
-            if (kill(pid, SIGUSR2) == -1)    
-                exit(EXIT_FAILURE);
+            if ((ascii_value >> j) & 1)
+            {
+                if (kill(pid, SIGUSR2) == -1)    
+                    exit(EXIT_FAILURE);
+            }
+            else
+            {
+                if (kill(pid, SIGUSR1) == -1)
+                    exit(EXIT_FAILURE);
+            }
+            signal_received = 0;
         }
-        else
-        {
-            if (kill(pid, SIGUSR1) == -1)
-                exit(EXIT_FAILURE);
-        }
+        usleep(100);
         j--;
     }
 }
 void msg_received(int sig, siginfo_t *info, void *ucontext)
 {
-    (void)sig;
     (void)ucontext;
     (void)info;
-    write(1, "aaa", 3);
+    (void)sig;
+    
+    signal_received = 1;
 }
 int main(int ac, char **av)
 {
@@ -69,6 +77,7 @@ int main(int ac, char **av)
     pid_t pid;
     int i;
 
+    signal_received = 1;
 	if (ac != 3)
 		return (write(2, "ERROR: Write: PID and String!\n", 30), -1);
     if (av[1] == NULL)
@@ -76,20 +85,23 @@ int main(int ac, char **av)
     if (!ft_valid_number(av[1]))
 		return (write(2, "ERROR: Please input only numbers\n", 33), -1);
     pid = atoi(av[1]);
-    if (pid == -1)
+    if (pid < 0)
         return (write(1, "ERROR: U trying to kill it heheh 😑", 37), -1);
     i = 0;
     if (av[2] == NULL)
         return (write(2, "ERROR: Pass the String!\n", 24), -1);
     sa.sa_sigaction = &msg_received;
-	sa.sa_flags = 0;
+	sa.sa_flags = SA_SIGINFO;
 	sigemptyset(&sa.sa_mask);
     if (sigaction(SIGUSR1, &sa, NULL) == -1)
-		return (write(2, "error: sigaction\n", 17), -1);
+		return (write(2, "error: sigaction\n", 17), -1);        
 	while (av[2][i])
 	{
         encoding(av[2][i], pid);
 		i++;
 	}
+    encoding('\0', pid);
+    while(1)
+        sleep(5);
     return (0);
 }

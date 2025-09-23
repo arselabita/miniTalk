@@ -17,7 +17,7 @@
 #include <stdlib.h>
 //#include "libft.h"
 
-static int signal_received;
+static int g_signal_received;
 
 static int	ft_valid_number(char *str)
 {
@@ -45,7 +45,7 @@ static void encoding(int ascii_value, int pid)
     j = 7;
     while (j >= 0)
     {   
-        if (signal_received == 1)
+        if (g_signal_received == 1)
         {
             if ((ascii_value >> j) & 1)
             {
@@ -57,7 +57,7 @@ static void encoding(int ascii_value, int pid)
                 if (kill(pid, SIGUSR1) == -1)
                     exit(EXIT_FAILURE);
             }
-            signal_received = 0;
+            g_signal_received = 0;
         }
         usleep(100);
         j--;
@@ -69,7 +69,7 @@ void msg_received(int sig, siginfo_t *info, void *ucontext)
     (void)info;
     (void)sig;
     
-    signal_received = 1;
+    g_signal_received = 1;
 }
 int main(int ac, char **av)
 {
@@ -77,7 +77,7 @@ int main(int ac, char **av)
     pid_t pid;
     int i;
 
-    signal_received = 1;
+    g_signal_received = 1;
 	if (ac != 3)
 		return (write(2, "ERROR: Write: PID and String!\n", 30), -1);
     if (av[1] == NULL)

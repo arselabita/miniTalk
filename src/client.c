@@ -53,6 +53,7 @@ static int encoding(int ascii_value, int pid)
         }
         j--;
         usleep(100);
+
     }
     return (0);
 }

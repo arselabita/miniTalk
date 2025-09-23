@@ -11,11 +11,14 @@
 /* ************************************************************************** */
 
 #define _DEFAULT_SOURCE
-#define BUFFER_SIZE 1024
+#define BUFFER_SIZE 10000
+#define MAX_CLIENT_PID 1000
 #include <sys/types.h>
 #include <unistd.h>
 #include <signal.h>
 #include "ft_printf.h"
+
+static int client_count = 0;
 
 static void printing(unsigned char bits)
 {
@@ -39,6 +42,21 @@ static void printing(unsigned char bits)
         i = 0;
     }
 }
+static void add_pid(pid_t pid)
+{
+    static char client_pid[MAX_CLIENT_PID];
+    int i;
+
+    i = 0;
+    while (i < client_pid)
+    {
+        if (client_pid[i] == pid )
+            return ;
+        i++;
+    }
+    if (client_count < MAX_CLIENT_PID)
+        client_pid[client_count++] = pid;
+}
 
 static void handler(int sig, siginfo_t *info, void *ucontext)
 {
@@ -47,8 +65,11 @@ static void handler(int sig, siginfo_t *info, void *ucontext)
     static int bit_position = 0;
     static pid_t client_pid = 0;
 
+    add_pid(info->si_pid);
 	if (!client_pid)
-		client_pid = info->si_pid;
+		client_pid = get_current_client();
+    if (info->si_pid != client_pid)
+        return ;
     if (sig == SIGUSR1)
         bits = (bits << 1) | 0;
     else
@@ -58,10 +79,11 @@ static void handler(int sig, siginfo_t *info, void *ucontext)
     {
         printing(bits);
         bits = 0;
-        bit_position = 0;
+        bit_position = 0;       
     }
-    if (kill(info->si_pid, SIGUSR1) == -1)
-        write(2, "Error: failed to send the client pid!\n", 39); 
+    if (kill(client_pid, SIGUSR1) == -1)
+        write(2, "Error: failed to send the client pid!\n", 39);
+    client_pid = 0;
 }
 
 int main()
@@ -77,6 +99,6 @@ int main()
 	if (sigaction(SIGUSR2, &sa, NULL) == -1)
 		return (write(2, "error: sigaction\n", 17), -1);
     while (1)
-        sleep(5);
+        pause();
     return (0);
 }

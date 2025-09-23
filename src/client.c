@@ -57,7 +57,7 @@ static void encoding(int ascii_value, int pid)
             }
             signal_received = 0;
         }
-        usleep(100);
+        usleep(1000);
         j--;
     }
 }

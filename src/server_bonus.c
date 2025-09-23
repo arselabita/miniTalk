@@ -18,6 +18,8 @@
 #include <stdio.h>
 #include "ft_printf.h"
 
+static pid_t g_client_pid = 0; 
+
 static void printing(unsigned char bits)
 {
     static char buffer[BUFFER_SIZE];
@@ -38,6 +40,7 @@ static void printing(unsigned char bits)
         write(1, &buffer, i);
         write(1, "\n", 1);
         i = 0;
+        g_client_pid = 0;
     }
 }
 
@@ -46,11 +49,10 @@ static void handler(int sig, siginfo_t *info, void *ucontext)
     (void)ucontext;
     static unsigned char bits = 0;
     static int bit_position = 0;
-    static pid_t client_pid = 0;
 	
-	if (!client_pid)
-		client_pid = info->si_pid;
-    if (info->si_pid != client_pid)
+	if (!g_client_pid)
+		g_client_pid = info->si_pid;
+    if (info->si_pid != g_client_pid)
         return ;
     if (sig == SIGUSR1)
         bits = (bits << 1) | 0;
@@ -65,7 +67,7 @@ static void handler(int sig, siginfo_t *info, void *ucontext)
     }
     if (info->si_pid == 0)
         write(2, "Error: failed to get the client pid!\n", 37);
-    if (kill(client_pid, SIGUSR1) == -1)
+    if (kill(g_client_pid, SIGUSR1) == -1)
         write(2, "Error: failed to send the client pid!\n", 39); 
 }
 

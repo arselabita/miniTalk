@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#define _DEFAULT_SOURCE
 #include <unistd.h>
 #include <signal.h>
 #include <sys/types.h>
@@ -36,6 +37,7 @@ static int	ft_valid_number(char *str)
 	}
 	return (1);
 }
+
 static void encoding(int ascii_value, int pid)
 {
     int j;

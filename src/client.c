@@ -52,7 +52,7 @@ static int encoding(int ascii_value, int pid)
                 exit(EXIT_FAILURE);
         }
         j--;
-        usleep(100);
+        usleep(110);
     }
     return (0);
 }

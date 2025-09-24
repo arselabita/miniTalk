@@ -59,7 +59,7 @@ static int encoding(int ascii_value, int pid)
     return (0);
 }
 
-int main(int ac, char **av)
+static int parsing(int ac, char **av)
 {
     pid_t pid;
     int i;
@@ -84,6 +84,13 @@ int main(int ac, char **av)
 	}
     if (encoding('\0', pid) == -1)
             return (write(2, "Error: Kill failed\n", 19), 1);
+    return (0);
+}
+
+int main(int ac, char **av)
+{
+    if (parsing(ac, av) == 1)
+        return (write(2, "Error!\n", 7), 1);
     while(1)
         sleep(5);
     return (0);

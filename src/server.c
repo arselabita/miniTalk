@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #define _DEFAULT_SOURCE
-#define ARG_MAX 1048576
+#define ARG_MAX 4096
 #include <sys/types.h>
 #include <unistd.h>
 #include <signal.h>
@@ -29,12 +29,13 @@ static void printing(unsigned char bits)
         else
         {
             write (1, buffer, i);
-            i = 0;           
+            i = 0;
+            buffer[i++] = bits;
         }
     }
     else
     {
-        buffer[i++] = '\0';
+        buffer[i] = '\0';
         write(1, buffer, i);
         write(1, "\n", 1);
         i = 0;

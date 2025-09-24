@@ -28,7 +28,7 @@ static void printing(unsigned char bits)
             buffer[i++] = bits;
         else
         {
-             write (1, buffer, i);
+            write (1, buffer, i);
             i = 0;           
         }
     }

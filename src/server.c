@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #define _DEFAULT_SOURCE
-#define BUFFER_SIZE 10000
+#define ARG_MAX 1048576
 #include <sys/types.h>
 #include <unistd.h>
 #include <signal.h>
@@ -19,22 +19,23 @@
 
 static void printing(unsigned char bits)
 {
-    static char buffer[BUFFER_SIZE];
+    static char buffer[ARG_MAX];
     static int i = 0;
 
     if (bits != '\0')
     {
-        buffer[i++] = bits;
-        if (i >= BUFFER_SIZE)
+        if (i < ARG_MAX)
+            buffer[i++] = bits;
+        else
         {
-            write(1, &buffer, i);
-            i = 0;                  
+             write (1, buffer, i);
+            i = 0;           
         }
     }
     else
     {
         buffer[i++] = '\0';
-        write(1, &buffer, i);
+        write(1, buffer, i);
         write(1, "\n", 1);
         i = 0;
     }
@@ -42,15 +43,11 @@ static void printing(unsigned char bits)
 
 static void handler(int sig, siginfo_t *info, void *ucontext)
 {
+    (void)info;
     (void)ucontext;
     static unsigned char bits = 0;
     static int bit_position = 0;
-    static pid_t client_pid = 0;
 
-	if (!client_pid)
-		client_pid =info->si_pid;
-    if (info->si_pid != client_pid)
-        return ;
     if (sig == SIGUSR1)
         bits = (bits << 1) | 0;
     else
@@ -62,8 +59,6 @@ static void handler(int sig, siginfo_t *info, void *ucontext)
         bits = 0;
         bit_position = 0;       
     }
-    if (kill(client_pid, SIGUSR1) == -1)
-        write(2, "Error: failed to send the client pid!\n", 39);
 }
 
 int main()

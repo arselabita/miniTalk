@@ -57,7 +57,7 @@ static void handler(int sig, siginfo_t *info, void *ucontext)
     {
         printing(bits);
         bits = 0;
-        bit_position = 0;       
+        bit_position = 0;
     }
 }
 

@@ -72,7 +72,7 @@ static int parsing(int ac, char **av)
 		return (write(2, "ERROR: Please input only numbers\n", 33), 1);
     pid = ft_atoi(av[1]);
     if (pid == -1)
-        return (write(1, "ERROR: U trying to kill it heheh 😑", 37), 1);
+        return (write(2, "ERROR: U trying to kill it heheh 😑", 37), 1);
     if (av[2] == NULL)
         return (write(2, "ERROR: Pass the String!\n", 24), 1); 
     i = 0;    
@@ -91,7 +91,5 @@ int main(int ac, char **av)
 {
     if (parsing(ac, av) == 1)
         return (write(2, "Error!\n", 7), 1);
-    while(1)
-        sleep(5);
     return (0);
 }

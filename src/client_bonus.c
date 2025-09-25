@@ -15,7 +15,6 @@
 #include <signal.h>
 #include <sys/types.h>
 #include "libft.h"
-#include "ft_printf.h"
 
 volatile sig_atomic_t g_signal_received;
 

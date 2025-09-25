@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #define _DEFAULT_SOURCE
-#define ARG_MAX 4096
+#define ARG_MAX 1048576
 #include <sys/types.h>
 #include <unistd.h>
 #include <signal.h>

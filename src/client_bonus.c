@@ -59,13 +59,11 @@ static int encoding(int ascii_value, int pid)
         usleep(100);
         j--;
     }
-    ft_printf("signal flag: %d\n", g_signal_received);
     return (0);
 }
 
 void msg_received(int sig)
 {
-    ft_printf("entered signal handler function\n");
     if (sig == SIGUSR1)
     {
         g_signal_received = 1;

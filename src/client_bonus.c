@@ -6,7 +6,7 @@
 /*   By: reciak <reciak@student.42vienna.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/19 20:59:03 by abita             #+#    #+#             */
-/*   Updated: 2025/09/26 16:07:39 by reciak           ###   ########.fr       */
+/*   Updated: 2025/09/26 17:01:45 by reciak           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ static int	encoding(int ascii_value, int pid)
 			if (kill(pid, SIGUSR1) == -1)
 				exit(EXIT_FAILURE);
 		}
-		usleep(100);
+//		usleep(100);
 		j--;
 	}
 	return (0);
@@ -68,17 +68,17 @@ static int	encoding(int ascii_value, int pid)
 
 void	give_perm_for_sending_next_bit(int sig)
 {
-#include <stdio.h>
-static int i = 0; i++; printf("---------\ni: %d\n", i);
+// #include <stdio.h>
+// static int i = 0; i++; printf("---------\ni: %d\n", i);
 	if (sig == SIGUSR1)
 	{
 		g_perm_to_send_next_bit = true;
-		write(1, "signal received... its hereeee!\n", 32);
+//		write(1, "signal received... its hereeee!\n", 32);
 	}
 	else if (sig == SIGUSR2)
 	{
 		g_perm_to_send_next_bit = true;
-		write(1, "signal SIGUSR2 received --------------------!\n", 47);
+//		write(1, "signal SIGUSR2 received --------------------!\n", 47);
 	}
 }
 

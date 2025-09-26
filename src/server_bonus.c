@@ -71,7 +71,9 @@ sic_client_pid = client_pid;
 	{
 		printing(bits);
 		if (bits == '\0')
+{
 			reply_signal = SIGUSR1;
+}
 		// else
 		// 	reply_signal = SIGUSR2;
 // printf("---\n");

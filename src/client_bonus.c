@@ -60,7 +60,7 @@ static int	encoding(int ascii_value, int pid)
 			if (kill(pid, SIGUSR1) == -1)
 				exit(EXIT_FAILURE);
 		}
-//		usleep(100);
+		usleep(100);
 		j--;
 	}
 	return (0);
@@ -72,8 +72,8 @@ void	give_perm_for_sending_next_bit(int sig)
 // static int i = 0; i++; printf("---------\ni: %d\n", i);
 	if (sig == SIGUSR1)
 	{
+		write(1, "Server confirmed, that the message was received!\n", 50);
 		g_perm_to_send_next_bit = true;
-//		write(1, "signal received... its hereeee!\n", 32);
 	}
 	else if (sig == SIGUSR2)
 	{

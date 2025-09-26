@@ -60,7 +60,6 @@ static int	encoding(int ascii_value, int pid)
 			if (kill(pid, SIGUSR1) == -1)
 				exit(EXIT_FAILURE);
 		}
-//		usleep(100);
 		j--;
 	}
 	return (0);
@@ -70,8 +69,6 @@ void	give_perm_for_sending_next_bit(int sig, siginfo_t *info, void *ucontext)
 {
 	(void) info;
 	(void) ucontext;
-// #include <stdio.h>
-// static int i = 0; i++; printf("---------\ni: %d\n", i);
 	if (sig == SIGUSR1)
 	{
 		write(1, "Server confirmed, that the message was received!\n", 50);
@@ -80,27 +77,20 @@ void	give_perm_for_sending_next_bit(int sig, siginfo_t *info, void *ucontext)
 	else if (sig == SIGUSR2)
 	{
 		g_perm_to_send_next_bit = true;
-//		write(1, "signal SIGUSR2 received --------------------!\n", 47);
 	}
 }
 
-static int	parsing(int ac, char **av)
+static int	parsing(char **av)
 {
 	pid_t	pid;
 	int		i;
 
-	if (ac != 3)
-		return (write(2, "ERROR: Write: PID and String!\n", 30), 1);
-	if (av[1] == NULL)
-		return (write(2, "ERROR: Pass the PID!\n", 24), -1);
-	if (!ft_valid_number(av[1]))
-		return (write(2, "ERROR: Please input only numbers\n", 33), 1);
 	pid = ft_atoi(av[1]);
 	if (pid <= 0)
 		return (write(2, "ERROR: U trying to kill it heheh 😑", 37), 1);
 	if (av[2] == NULL)
 		return (write(2, "ERROR: Pass the String!\n", 24), 1);
-g_perm_to_send_next_bit = true;
+	g_perm_to_send_next_bit = true;
 	i = 0;
 	while (av[2][i])
 	{
@@ -126,10 +116,13 @@ int	main(int ac, char **av)
 		return (write(2, "Error: sigaction\n", 17), -1);
 	if (sigaction(SIGUSR2, &sa, NULL) == -1)
 		return (write(2, "Error: sigaction\n", 17), -1);
-
-/* 	signal(SIGUSR1, give_perm_for_sending_next_bit);
-	signal(SIGUSR2, give_perm_for_sending_next_bit); */
-	if (parsing(ac, av) == 1)
+	if (ac != 3)
+		return (write(2, "ERROR: Write: PID and String!\n", 30), 1);
+	if (av[1] == NULL)
+		return (write(2, "ERROR: Pass the PID!\n", 24), -1);
+	if (!ft_valid_number(av[1]))
+		return (write(2, "ERROR: Please input only numbers\n", 33), 1);
+	if (parsing(av) == 1)
 		return (write(2, "Error!\n", 7), 1);
 	return (0);
 }

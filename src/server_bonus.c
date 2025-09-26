@@ -18,6 +18,8 @@
 #include <signal.h>
 #include "ft_printf.h"
 
+volatile	sig_atomic_t	g_received_signal;
+
 static void	printing(unsigned char bits)
 {
 	static char	buffer[ARG_MAX];
@@ -49,7 +51,6 @@ static void	handler(int sig, siginfo_t *info, void *ucontext)
 	static int				bit_position = 0;
 	static pid_t			client_pid = 0;
 
-	(void) info;
 	(void) ucontext;
 	if (!client_pid)
 		client_pid = info->si_pid;
@@ -68,7 +69,10 @@ static void	handler(int sig, siginfo_t *info, void *ucontext)
 		bits = 0;
 		bit_position = 0;
 		client_pid = 0;
+return ;
 	}
+static int i = ;
+kill (client_pid, SIGUSR2);
 }
 
 int	main(void)
@@ -84,6 +88,7 @@ int	main(void)
 	if (sigaction(SIGUSR2, &sa, NULL) == -1)
 		return (write(2, "Error: sigaction\n", 17), -1);
 	while (1)
-		pause();
+		;
+		//pause();
 	return (0);
 }

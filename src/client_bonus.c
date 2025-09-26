@@ -17,7 +17,7 @@
 #include <sys/types.h>
 #include "libft.h"
 
-volatile sig_atomic_t	g_signal_received;
+volatile sig_atomic_t	g_perm_to_send_next_bit;
 
 static int	ft_valid_number(char *str)
 {
@@ -66,9 +66,15 @@ void	msg_received(int sig)
 {
 	if (sig == SIGUSR1)
 	{
-		g_signal_received = 1;
+		g_perm_to_send_next_bit = 1;
 		write(1, "signal received... its hereeee!\n", 32);
 	}
+	else if (sig == SIGUSR2)
+	{
+		g_perm_to_send_next_bit = 1;
+		write(1, "signal SIGUSR2 received --------------------!\n", 47);
+	}
+
 }
 
 static int	parsing(int ac, char **av)
@@ -102,6 +108,7 @@ static int	parsing(int ac, char **av)
 int	main(int ac, char **av)
 {
 	signal(SIGUSR1, msg_received);
+	signal(SIGUSR2, msg_received);
 	if (parsing(ac, av) == 1)
 		return (write(2, "Error!\n", 7), 1);
 	return (0);

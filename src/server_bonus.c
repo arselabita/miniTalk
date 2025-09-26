@@ -29,7 +29,7 @@ static void	printing(unsigned char bits)
 			buffer[i++] = bits;
 		else
 		{
-			write (1, buffer, i);
+			write (1, buffer, i);    // write (STDOUT_FILENO, ....)
 			i = 0;
 			buffer[i++] = bits;
 		}
@@ -45,30 +45,39 @@ static void	printing(unsigned char bits)
 
 static void	handler(int sig, siginfo_t *info, void *ucontext)
 {
+#include <stdio.h>
+static size_t i = 0;
+printf("i: %zu\n", i);
+i++;
+
+
+
 	static unsigned char	bits = 0;
 	static int				bit_position = 0;
 	static pid_t			client_pid = 0;
 
-	(void) info;
 	(void) ucontext;
 	if (!client_pid)
 		client_pid = info->si_pid;
-	if (client_pid != info->si_pid)
+	if (client_pid != info->si_pid)     //  Q? Could this get a second client hung when it sends while the first client is busy?
 		return ;
 	if (sig == SIGUSR1)
 		bits = (bits << 1) | 0;
 	else
 		bits = (bits << 1) | 1;
 	bit_position++;
+
+pid_t tmp_client_pid = client_pid;
 	if (bit_position == 8)
 	{
 		printing(bits);
 		if (bits == '\0')
 			kill(client_pid, SIGUSR1);
-		bits = 0;
+		bits = 0;                            // Probably not needed?
 		bit_position = 0;
 		client_pid = 0;
 	}
+kill (tmp_client_pid, SIGUSR2);
 }
 
 int	main(void)
@@ -84,6 +93,9 @@ int	main(void)
 	if (sigaction(SIGUSR2, &sa, NULL) == -1)
 		return (write(2, "Error: sigaction\n", 17), -1);
 	while (1)
-		pause();
+	{
+		sleep (100);
+		// pause();
+	}
 	return (0);
 }

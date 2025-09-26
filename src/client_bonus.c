@@ -46,6 +46,13 @@ static int	encoding(int ascii_value, int pid)
 	j = 7;
 	while (j >= 0)
 	{
+#include <stdio.h>
+printf("---------------\n"
+	"j: %d\n" 
+	"  g_signal_received: %d\n", j, g_signal_received);
+		while (g_signal_received == 0)
+			pause();
+		//g_signal_received = 0;
 		if ((ascii_value >> j) & 1)
 		{
 			if (kill(pid, SIGUSR2) == -1)
@@ -56,19 +63,24 @@ static int	encoding(int ascii_value, int pid)
 			if (kill(pid, SIGUSR1) == -1)
 				exit(EXIT_FAILURE);
 		}
-		usleep(100);
+		//usleep(100);
 		j--;
 	}
 	return (0);
 }
 
-void	msg_received(int sig)
+void	msg_received(int sig)       // static
 {
 	if (sig == SIGUSR1)
 	{
 		g_signal_received = 1;
 		write(1, "signal received... its hereeee!\n", 32);
 	}
+if (sig == SIGUSR2)
+{
+	g_signal_received = 1;
+	write(1, "signal received... its hereeee!\n", 32);
+}
 }
 
 static int	parsing(int ac, char **av)
@@ -87,6 +99,9 @@ static int	parsing(int ac, char **av)
 		return (write(2, "ERROR: U trying to kill it heheh 😑", 37), 1);
 	if (av[2] == NULL)
 		return (write(2, "ERROR: Pass the String!\n", 24), 1);
+
+// Maybe put the below into new function / main
+	g_signal_received = 1;  // XXX
 	i = 0;
 	while (av[2][i])
 	{
@@ -102,6 +117,7 @@ static int	parsing(int ac, char **av)
 int	main(int ac, char **av)
 {
 	signal(SIGUSR1, msg_received);
+	signal(SIGUSR2, msg_received);
 	if (parsing(ac, av) == 1)
 		return (write(2, "Error!\n", 7), 1);
 	return (0);

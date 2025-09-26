@@ -6,7 +6,7 @@
 /*   By: abita <abita@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/19 20:59:10 by abita             #+#    #+#             */
-/*   Updated: 2025/09/19 20:59:38 by abita            ###   ########.fr       */
+/*   Updated: 2025/09/26 20:58:59 by abita            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,8 @@ static void	handler(int sig, siginfo_t *info, void *ucontext)
 	static unsigned char	bits = 0;
 	static int				bit_position = 0;
 	static pid_t			client_pid = 0;
-	int	reply_signal;
-	pid_t sic_client_pid;
+	int						reply_signal;
+	pid_t					sic_client_pid;
 
 	(void) ucontext;
 	if (!client_pid)
@@ -86,6 +86,5 @@ int	main(void)
 		return (write(2, "Error: sigaction\n", 17), -1);
 	while (1)
 		;
-
 	return (0);
 }

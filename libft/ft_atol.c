@@ -12,7 +12,7 @@
 
 #include <limits.h>
 
-long	ft_atol(const char *nptr)
+long long	ft_atol(const char *nptr)
 {
 	long	num;
 	int		minus;

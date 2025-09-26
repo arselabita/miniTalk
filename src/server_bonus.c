@@ -62,16 +62,17 @@ static void	handler(int sig, siginfo_t *info, void *ucontext)
 		bits = (bits << 1) | 1;
 	bit_position++;
 // #include <stdio.h>
-// static int i = 0; i++; printf("i: %d\n", i);
+// static int i = 0; i++; write(1, "i:", 2);printf("%d\n", i);
 
 int	reply_signal = SIGUSR2;
-volatile sig_atomic_t sic_client_pid;
+pid_t sic_client_pid;
 sic_client_pid = client_pid;
 	if (bit_position == 8)
 	{
 		printing(bits);
 		if (bits == '\0')
 {
+//	sleep(1);
 			reply_signal = SIGUSR1;
 }
 		// else

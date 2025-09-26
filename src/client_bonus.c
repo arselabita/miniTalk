@@ -60,14 +60,16 @@ static int	encoding(int ascii_value, int pid)
 			if (kill(pid, SIGUSR1) == -1)
 				exit(EXIT_FAILURE);
 		}
-		usleep(100);
+//		usleep(100);
 		j--;
 	}
 	return (0);
 }
 
-void	give_perm_for_sending_next_bit(int sig)
+void	give_perm_for_sending_next_bit(int sig, siginfo_t *info, void *ucontext)
 {
+	(void) info;
+	(void) ucontext;
 // #include <stdio.h>
 // static int i = 0; i++; printf("---------\ni: %d\n", i);
 	if (sig == SIGUSR1)
@@ -108,13 +110,25 @@ g_perm_to_send_next_bit = true;
 	}
 	if (encoding('\0', pid) == -1)
 		return (write(2, "Error: Kill failed\n", 19), 1);
+	sleep (5);
 	return (0);
 }
 
 int	main(int ac, char **av)
 {
-	signal(SIGUSR1, give_perm_for_sending_next_bit);
-	signal(SIGUSR2, give_perm_for_sending_next_bit);
+
+	struct sigaction	sa;
+
+	sa.sa_sigaction = &give_perm_for_sending_next_bit;
+	sa.sa_flags = SA_SIGINFO;
+	sigemptyset(&sa.sa_mask);
+	if (sigaction(SIGUSR1, &sa, NULL) == -1)
+		return (write(2, "Error: sigaction\n", 17), -1);
+	if (sigaction(SIGUSR2, &sa, NULL) == -1)
+		return (write(2, "Error: sigaction\n", 17), -1);
+
+/* 	signal(SIGUSR1, give_perm_for_sending_next_bit);
+	signal(SIGUSR2, give_perm_for_sending_next_bit); */
 	if (parsing(ac, av) == 1)
 		return (write(2, "Error!\n", 7), 1);
 	return (0);

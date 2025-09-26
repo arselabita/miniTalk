@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server_bonus.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: reciak <reciak@student.42vienna.com>       +#+  +:+       +#+        */
+/*   By: abita <abita@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/19 20:59:10 by abita             #+#    #+#             */
-/*   Updated: 2025/09/26 16:50:45 by reciak           ###   ########.fr       */
+/*   Updated: 2025/09/19 20:59:38 by abita            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,20 +63,23 @@ static void	handler(int sig, siginfo_t *info, void *ucontext)
 	bit_position++;
 // #include <stdio.h>
 // static int i = 0; i++; printf("i: %d\n", i);
+
+int	reply_signal = SIGUSR2;
+volatile sig_atomic_t sic_client_pid;
+sic_client_pid = client_pid;
 	if (bit_position == 8)
 	{
 		printing(bits);
 		if (bits == '\0')
-			kill(client_pid, SIGUSR1);
-		else
-			kill (client_pid, SIGUSR2);
+			reply_signal = SIGUSR1;
+		// else
+		// 	reply_signal = SIGUSR2;
 // printf("---\n");
 		bits = 0;
 		bit_position = 0;
 		client_pid = 0;
-return ;
 	}
-kill (client_pid, SIGUSR2);
+kill (sic_client_pid, reply_signal);
 }
 
 int	main(void)

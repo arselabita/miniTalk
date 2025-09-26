@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client_bonus.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abita <abita@student.42vienna.com>         +#+  +:+       +#+        */
+/*   By: reciak <reciak@student.42vienna.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/19 20:59:03 by abita             #+#    #+#             */
-/*   Updated: 2025/09/19 20:59:04 by abita            ###   ########.fr       */
+/*   Updated: 2025/09/26 16:07:39 by reciak           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include <unistd.h>
 #include <signal.h>
 #include <sys/types.h>
+#include <stdbool.h>
 #include "libft.h"
 
 volatile sig_atomic_t	g_perm_to_send_next_bit;
@@ -46,6 +47,9 @@ static int	encoding(int ascii_value, int pid)
 	j = 7;
 	while (j >= 0)
 	{
+		while (g_perm_to_send_next_bit == false)
+			;
+		g_perm_to_send_next_bit = false;
 		if ((ascii_value >> j) & 1)
 		{
 			if (kill(pid, SIGUSR2) == -1)
@@ -62,19 +66,20 @@ static int	encoding(int ascii_value, int pid)
 	return (0);
 }
 
-void	msg_received(int sig)
+void	give_perm_for_sending_next_bit(int sig)
 {
+#include <stdio.h>
+static int i = 0; i++; printf("---------\ni: %d\n", i);
 	if (sig == SIGUSR1)
 	{
-		g_perm_to_send_next_bit = 1;
+		g_perm_to_send_next_bit = true;
 		write(1, "signal received... its hereeee!\n", 32);
 	}
 	else if (sig == SIGUSR2)
 	{
-		g_perm_to_send_next_bit = 1;
+		g_perm_to_send_next_bit = true;
 		write(1, "signal SIGUSR2 received --------------------!\n", 47);
 	}
-
 }
 
 static int	parsing(int ac, char **av)
@@ -93,6 +98,7 @@ static int	parsing(int ac, char **av)
 		return (write(2, "ERROR: U trying to kill it heheh 😑", 37), 1);
 	if (av[2] == NULL)
 		return (write(2, "ERROR: Pass the String!\n", 24), 1);
+g_perm_to_send_next_bit = true;
 	i = 0;
 	while (av[2][i])
 	{
@@ -107,8 +113,8 @@ static int	parsing(int ac, char **av)
 
 int	main(int ac, char **av)
 {
-	signal(SIGUSR1, msg_received);
-	signal(SIGUSR2, msg_received);
+	signal(SIGUSR1, give_perm_for_sending_next_bit);
+	signal(SIGUSR2, give_perm_for_sending_next_bit);
 	if (parsing(ac, av) == 1)
 		return (write(2, "Error!\n", 7), 1);
 	return (0);

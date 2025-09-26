@@ -48,27 +48,28 @@ static void	handler(int sig, siginfo_t *info, void *ucontext)
 	static unsigned char	bits = 0;
 	static int				bit_position = 0;
 	static pid_t			client_pid = 0;
+	int	reply_signal;
+	pid_t sic_client_pid;
 
-	(void) info;
 	(void) ucontext;
 	if (!client_pid)
 		client_pid = info->si_pid;
 	if (client_pid != info->si_pid)
 		return ;
-	if (sig == SIGUSR1)
-		bits = (bits << 1) | 0;
-	else
-		bits = (bits << 1) | 1;
+	bits = (bits << 1) | (sig == SIGUSR2);
 	bit_position++;
+	reply_signal = SIGUSR2;
+	sic_client_pid = client_pid;
 	if (bit_position == 8)
 	{
 		printing(bits);
 		if (bits == '\0')
-			kill(client_pid, SIGUSR1);
+			reply_signal = SIGUSR1;
 		bits = 0;
 		bit_position = 0;
 		client_pid = 0;
 	}
+	kill (sic_client_pid, reply_signal);
 }
 
 int	main(void)
@@ -84,6 +85,7 @@ int	main(void)
 	if (sigaction(SIGUSR2, &sa, NULL) == -1)
 		return (write(2, "Error: sigaction\n", 17), -1);
 	while (1)
-		pause();
+		;
+
 	return (0);
 }
